@@ -75,7 +75,8 @@ Eventhough there are great clients for metadata extraction, we found a very neat
 
 ## Maintenance
 
-Maintainer / author: [Pedro V Hernandez Serrano](https://github.com/pedrohserrano)  
+Author: [Pedro V Hernandez Serrano](https://github.com/pedrohserrano)  
+Software management: <researchsoftware-ub@maastrichtuniversity.nl>  
 Contact UM Dataverse: <ub-dataverse@maastrichtuniversity.nl>  
 Released under [MIT License](LICENSE)  
 © 2026 Maastricht University Library | [UM Disclaimer](https://www.maastrichtuniversity.nl/disclaimer)

@@ -13,19 +13,16 @@ from pathlib import Path
 from typing import Any
 
 PRODUCTION_BASE_URL = "https://dataverse.nl"
-ROOT_DATAVERSE_NAME = "Maastricht University"
-IGNORED_DATAVERSE_SEGMENTS = {"root", ROOT_DATAVERSE_NAME, "UB-UM"}
+ROOT_DATAVERSE_NAME = "Utrecht University"
+IGNORED_DATAVERSE_SEGMENTS = {"root", ROOT_DATAVERSE_NAME}
 FACULTY_MAPPING = {
-    "Faculty of Psychology and Neuroscience": "FPN",
-    "School of Business and Economics": "SBE",
-    "Faculty of Health, Medicine & Life Sciences": "FHML",
-    "Faculty of Arts and Social Sciences": "FASoS",
-    "Faculty of Law": "FdR",
-    "Faculty of Science and Engineering": "FSE",
-    "UNU-MERIT": "UNU-MERIT",
-    "DataHub": "MUMC+",
-    "Maastricht UMC+": "MUMC+",
-    "Zuyderland": "MUMC+",
+    "UU Social and Behavioural Sciences": "UUsocial",
+    "UU Geosciences": "geosciences",
+    "UU Science": "UUscience",
+    "UU Veterinary Medicine": "uuvetmedicine",
+    "UU Humanities": "humanitiesuu",
+    "UU Law, Economics and Governance": "uulaw",
+    "UU other": "UUother",
 }
 
 
@@ -138,20 +135,21 @@ def persistent_id_from_record(record: dict[str, Any]) -> str:
             "globalId",
             "doi",
             "data.datasetPersistentId",
+            "data.latestVersion.datasetPersistentId",
             "path_info.datasetPersistentId",
         )
     )
     if direct:
         return direct
 
-    protocol = as_string(record.get("protocol"))
-    authority = as_string(record.get("authority"))
-    identifier = as_string(record.get("identifier"))
+    protocol = as_string(first_present(record, "protocol", "data.protocol"))
+    authority = as_string(first_present(record, "authority", "data.authority"))
+    identifier = as_string(first_present(record, "identifier", "data.identifier"))
     if protocol and authority and identifier:
-        separator = as_string(record.get("separator")) or "/"
+        separator = as_string(first_present(record, "separator", "data.separator")) or "/"
         return f"{protocol}:{authority}{separator}{identifier}"
 
-    persistent_url = as_string(record.get("persistentUrl"))
+    persistent_url = as_string(first_present(record, "persistentUrl", "data.persistentUrl"))
     if persistent_url.startswith("https://doi.org/"):
         return f"doi:{persistent_url.removeprefix('https://doi.org/')}"
 
@@ -391,7 +389,9 @@ def extract_description(record: dict[str, Any]) -> str:
 
 
 def extract_files(record: dict[str, Any]) -> list[dict[str, Any]]:
-    raw_files = first_present(record, "files", "data.files", "dataFiles", "datafiles")
+    raw_files = first_present(
+        record, "files", "data.files", "data.latestVersion.files", "dataFiles", "datafiles"
+    )
     files: list[dict[str, Any]] = []
 
     for item in ensure_list(raw_files):
@@ -423,13 +423,16 @@ def extract_files(record: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 def citation_field_value(record: dict[str, Any], type_name: str) -> Any:
-    fields = get_nested(record, "data.metadataBlocks.citation.fields", [])
-    if not isinstance(fields, list):
-        return None
-
-    for field in fields:
-        if isinstance(field, dict) and field.get("typeName") == type_name:
-            return field.get("value")
+    for fields_path in (
+        "data.latestVersion.metadataBlocks.citation.fields",
+        "data.metadataBlocks.citation.fields",
+    ):
+        fields = get_nested(record, fields_path, [])
+        if not isinstance(fields, list):
+            continue
+        for field in fields:
+            if isinstance(field, dict) and field.get("typeName") == type_name:
+                return field.get("value")
     return None
 
 
@@ -438,12 +441,37 @@ def path_segments_from_record(record: dict[str, Any]) -> list[str]:
     return [segment.strip() for segment in raw_path.split("/") if segment.strip()]
 
 
+def subdataverse_path_from_is_part_of(is_part_of: Any) -> list[str]:
+    """Walk the dvmeta-style nested `isPartOf` parent chain (immediate parent
+    dataverse up to the root) and turn it into a top-down list of display
+    names, dropping the crawler root ("root") and the tenant root
+    (ROOT_DATAVERSE_NAME) itself."""
+    segments: list[str] = []
+    node = is_part_of
+    while isinstance(node, dict):
+        identifier = as_string(node.get("identifier"))
+        if identifier == "root":
+            break
+        display_name = as_string(node.get("displayName")) or identifier
+        if display_name and display_name != ROOT_DATAVERSE_NAME:
+            segments.append(display_name)
+        node = node.get("isPartOf")
+    segments.reverse()
+    return segments
+
+
 def subdataverse_alias_from_record(record: dict[str, Any], context: dict[str, Any] | None) -> str:
     direct = as_string(
         first_present(record, "subdataverse_alias", "dataverse_alias", "parentDataverseAlias", "alias")
     )
     if direct:
         return direct
+
+    is_part_of = get_nested(record, "data.isPartOf")
+    if isinstance(is_part_of, dict):
+        alias = as_string(is_part_of.get("identifier"))
+        if alias and alias != "root":
+            return alias
 
     if not context:
         return ""
@@ -512,6 +540,7 @@ def normalize_record(record: dict[str, Any], context: dict[str, Any] | None = No
             "landingPageUrl",
             "persistentUrl",
             "data.url",
+            "data.persistentUrl",
         )
     )
     if not url and persistent_id:
@@ -524,6 +553,7 @@ def normalize_record(record: dict[str, Any], context: dict[str, Any] | None = No
             "published_at",
             "publication_date_utc",
             "data.publicationDate",
+            "data.latestVersion.publicationDate",
         )
     )
     version_state = as_string(
@@ -536,6 +566,7 @@ def normalize_record(record: dict[str, Any], context: dict[str, Any] | None = No
             "data.versionState",
             "data.publicationStatus",
             "data.latestVersionPublishingState",
+            "data.latestVersion.versionState",
         )
     )
     latest_version_publishing_state = as_string(
@@ -544,6 +575,7 @@ def normalize_record(record: dict[str, Any], context: dict[str, Any] | None = No
             "latestVersionPublishingState",
             "latest_version_publishing_state",
             "data.latestVersionPublishingState",
+            "data.latestVersion.latestVersionPublishingState",
         )
     )
     license_value = as_string(
@@ -555,6 +587,8 @@ def normalize_record(record: dict[str, Any], context: dict[str, Any] | None = No
             "metadata.license",
             "data.license.name",
             "data.license.rightsIdentifier",
+            "data.latestVersion.license.name",
+            "data.latestVersion.license.rightsIdentifier",
         )
     )
     access_status = as_string(first_present(record, "access_status", "accessStatus"))
@@ -567,6 +601,10 @@ def normalize_record(record: dict[str, Any], context: dict[str, Any] | None = No
             "access_conditions",
             "termsOfAccess",
             "data.termsOfAccess",
+            "data.latestVersion.termsOfAccess",
+            "termsOfUse",
+            "data.termsOfUse",
+            "data.latestVersion.termsOfUse",
         )
     )
 
@@ -581,6 +619,8 @@ def normalize_record(record: dict[str, Any], context: dict[str, Any] | None = No
     )
     if not subdataverse_path:
         subdataverse_path = path_segments_from_record(record)
+    if not subdataverse_path:
+        subdataverse_path = subdataverse_path_from_is_part_of(get_nested(record, "data.isPartOf"))
 
     subdataverse = as_string(first_present(record, "subdataverse", "dataverse_name", "parentDataverseName"))
     if not subdataverse and len(subdataverse_path) > 1:

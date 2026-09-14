@@ -1,7 +1,7 @@
 const CHECK_LABELS = {
   license_cc_by_4: "CC-BY licence for non restricted data",
   restricted_terms: "Custom terms for restricted data",
-  um_service_contact: "UM service contact is present",
+  contact_present: "Dataset contact is present",
   author_orcid: "At least one author has an ORCID",
   description_present: "Description is present",
   keywords_present: "Keywords are present",
@@ -11,86 +11,48 @@ const GUIDELINE_CHECKS = [
   {
     key: "license_cc_by_4",
     title: "CC-BY licence for non restricted data",
-    detail: "Based on guideline point 12.1.",
+    detail: "Checks that the dataset has a non-empty licence other than CC0-1.0.",
   },
   {
     key: "restricted_terms",
     title: "Custom terms for restricted data",
-    detail: "Based on guideline points 12.2–12.3.",
+    detail: "Checks that custom terms or access conditions are present when at least one file has restricted access.",
   },
   {
-    key: "um_service_contact",
-    title: "UM service contact is present",
-    detail: "Based on guideline point 12.5; checked against approved service-contact labels in the dataset contact metadata.",
+    key: "contact_present",
+    title: "Dataset contact is present",
+    detail: "Checks whether at least one named dataset contact is present in the dataset contact metadata.",
   },
   {
     key: "author_orcid",
     title: "At least one author has an ORCID",
-    detailHtml:
-      'It is required for discoverability and be programmatically linked to the <a href="https://cris.maastrichtuniversity.nl/" target="_blank" rel="noreferrer">CRIS system</a> for research outputs at UM.',
+    detail: "It is required for discoverability and programmatic linking to research-output systems.",
   },
   {
     key: "description_present",
     title: "Description is present",
-    detail: "Based on section 9 of the guidelines.",
+    detail: "Checks whether a dataset description is present.",
   },
   {
     key: "keywords_present",
     title: "Keywords are present",
-    detail: "Based on section 9 of the guidelines.",
+    detail: "Checks whether at least one keyword is present.",
   },
 ];
 
 const CHECK_ORDER = GUIDELINE_CHECKS.map((check) => check.key);
 const MOST_REQUIREMENTS_THRESHOLD = 5;
 const SOME_REQUIREMENTS_THRESHOLD = Math.ceil(CHECK_ORDER.length / 2);
-const MAASTRICHT_TOP_LEVELS = new Set([
-  "Faculty of Psychology and Neuroscience",
-  "School of Business and Economics",
-  "Faculty of Health, Medicine & Life Sciences",
-  "Faculty of Arts and Social Sciences",
-  "Faculty of Law",
-  "Faculty of Science and Engineering",
-  "UNU-MERIT",
-  "DataHub",
-  "Maastricht UMC+",
-  "Zuyderland",
-  "University Library",
+const INSTITUTION_TOP_LEVELS = new Set([
+  "UU Social and Behavioural Sciences",
+  "UU Geosciences",
+  "UU Science",
+  "UU Veterinary Medicine",
+  "UU Humanities",
+  "UU Law, Economics and Governance",
+  "UU other",
 ]);
 
-const APPROVED_UM_SERVICE_CONTACT_LABELS = new Set([
-  "data management law",
-  "data steward sbe",
-  "datamanagement fpn",
-  "dataverse support contact",
-  "dataversenl team",
-  "dataversenl um contact",
-  "dataversenl um-ul team",
-  "faculty data manager",
-  "faculty data manager fpn",
-  "fasos data steward",
-  "icis office",
-  "law and tech lab",
-  "law faculty data management services",
-  "law rdm support",
-  "rdm services",
-  "rdm sevices",
-  "rdm support fasos",
-  "rdm support law",
-  "rdm-roa",
-  "rdm-sbe",
-  "sbe faculty data steward",
-  "sbe rdm",
-  "sbe research data management",
-  "sbe research data management (maastricht university)",
-  "shedata",
-  "ub dataverse",
-  "ub dataverse support",
-  "um admin",
-  "um dataverse admin",
-  "um dataverse support",
-  "um dataversenl",
-]);
 const CHART_COLORS = {
   primary: "#001c3d",
   warning: "#D2460F",
@@ -102,7 +64,10 @@ const CHART_COLORS = {
 };
 
 const IMPORT_PROTOCOL = "https://";
-const IMPORT_HOST = "um-dataversenl.s3.eu-west-3.amazonaws.com";
+// TODO: set this to the real hosting bucket/host for data/datasets.json
+// once the UU deployment has one (the original Maastricht deployment used
+// its own S3 bucket here).
+const IMPORT_HOST = "";
 const IMPORT_FILE = "datasets.json";
 const LOCAL_DATA_URL = "data/datasets.json";
 const REMOTE_IMPORT_URL = `${IMPORT_PROTOCOL}${IMPORT_HOST}/${IMPORT_FILE}`;
@@ -210,14 +175,14 @@ function diagnoseDatasetRecords(datasets) {
     counts[label] = (counts[label] || 0) + 1;
     return counts;
   }, {});
-  const outsideMaastricht = datasetRecords.filter((dataset) => !isWithinMaastrichtHierarchy(dataset));
+  const outsideInstitution = datasetRecords.filter((dataset) => !isWithinInstitutionHierarchy(dataset));
   const harvestedFieldKnown = datasetRecords.some((dataset) => hasHarvestedValue(dataset));
   const harvestedTrueCount = datasetRecords.filter((dataset) => isHarvestedRecord(dataset)).length;
   const publishedDatasets = datasetRecords.filter((dataset) => isPublishedDataset(dataset));
-  const maastrichtPublishedDatasets = publishedDatasets.filter((dataset) =>
-    isWithinMaastrichtHierarchy(dataset)
+  const institutionPublishedDatasets = publishedDatasets.filter((dataset) =>
+    isWithinInstitutionHierarchy(dataset)
   );
-  const nonHarvestedDatasets = maastrichtPublishedDatasets.filter(
+  const nonHarvestedDatasets = institutionPublishedDatasets.filter(
     (dataset) => !isHarvestedRecord(dataset)
   );
   const finalDatasets = dedupeDatasets(nonHarvestedDatasets);
@@ -230,7 +195,7 @@ function diagnoseDatasetRecords(datasets) {
     publicationStateCounts,
     duplicatePersistentIdCount,
     topLevelCounts,
-    outsideMaastrichtCount: outsideMaastricht.length,
+    outsideInstitutionCount: outsideInstitution.length,
     harvestedFieldKnown,
     harvestedTrueCount,
     finalCount: finalDatasets.length,
@@ -243,7 +208,7 @@ function evaluateDatasetChecks(dataset) {
   return {
     license_cc_by_4: passesLicenseCheck(dataset),
     restricted_terms: hasRequiredRestrictedTerms(dataset),
-    um_service_contact: hasApprovedUmServiceContact(dataset),
+    contact_present: hasContactPresent(dataset),
     author_orcid: hasAuthorOrcid(dataset),
     description_present: hasDescription(dataset),
     keywords_present: hasKeywords(dataset),
@@ -304,10 +269,8 @@ function hasRequiredRestrictedTerms(dataset) {
   return possibleTerms.some((value) => typeof value === "string" && value.trim() !== "");
 }
 
-function hasApprovedUmServiceContact(dataset) {
-  return collectContactLabels(dataset)
-    .map((label) => normalizeServiceContactLabel(label))
-    .some((label) => APPROVED_UM_SERVICE_CONTACT_LABELS.has(label));
+function hasContactPresent(dataset) {
+  return collectContactLabels(dataset).length > 0;
 }
 
 function hasAuthorOrcid(dataset) {
@@ -391,13 +354,6 @@ function extractEmbeddedDataverseValue(value) {
   return match ? match[1] : value;
 }
 
-function normalizeServiceContactLabel(value) {
-  return String(value || "")
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, " ");
-}
-
 function renderDashboard(datasets) {
   filteredDatasets = sortDatasetsByPublicationDate(datasets);
   renderSummary(filteredDatasets);
@@ -414,7 +370,7 @@ function logDatasetDiagnostics(diagnostics) {
     publicationStates: diagnostics.publicationStateCounts,
     duplicatePersistentIds: diagnostics.duplicatePersistentIdCount,
     topLevelDataverses: diagnostics.topLevelCounts,
-    outsideMaastrichtHierarchy: diagnostics.outsideMaastrichtCount,
+    outsideInstitutionHierarchy: diagnostics.outsideInstitutionCount,
     harvestedTrue: diagnostics.harvestedFieldKnown ? diagnostics.harvestedTrueCount : "field not present",
     finalUniquePublishedDatasetCount: diagnostics.finalCount,
   });
@@ -826,10 +782,10 @@ function isHarvestedRecord(dataset) {
   return dataset.harvested === true || dataset.isHarvested === true;
 }
 
-function isWithinMaastrichtHierarchy(dataset) {
+function isWithinInstitutionHierarchy(dataset) {
   const topLevel = String(dataset.top_level_dataverse || "").trim();
   if (topLevel !== "") {
-    return MAASTRICHT_TOP_LEVELS.has(topLevel);
+    return INSTITUTION_TOP_LEVELS.has(topLevel);
   }
 
   const rawPath =
@@ -900,9 +856,9 @@ function collectDatasetWarnings(datasets) {
     );
   }
 
-  if (datasets.some((dataset) => !isWithinMaastrichtHierarchy(dataset))) {
+  if (datasets.some((dataset) => !isWithinInstitutionHierarchy(dataset))) {
     warnings.push(
-      "TODO: Some normalized records do not expose a Maastricht hierarchy field and are excluded from the final dataset total."
+      "TODO: Some normalized records do not expose an institution hierarchy field and are excluded from the final dataset total."
     );
   }
 
@@ -953,7 +909,6 @@ function setupCsvExport() {
       "Publication Date",
       "Requirements Met",
       "Missing Metadata Requirements",
-      "Approved Service Contact Labels",
       "All Contact Labels",
       ...CHECK_ORDER.map((key) => CHECK_LABELS[key]),
       "Persistent ID",
@@ -967,7 +922,6 @@ function setupCsvExport() {
       dataset.publication_date || "",
       `${dataset.passed_checks_count}/${CHECK_ORDER.length} requirements met`,
       (dataset.unmet_checks || dataset.missing_checks || []).join("; "),
-      getApprovedServiceContactLabels(dataset).join("; "),
       getUniqueContactLabels(dataset).join("; "),
       ...CHECK_ORDER.map((key) => dataset.checks[key]),
       dataset.persistent_id || "",
@@ -986,12 +940,6 @@ function setupCsvExport() {
     link.click();
     URL.revokeObjectURL(downloadUrl);
   });
-}
-
-function getApprovedServiceContactLabels(dataset) {
-  return getUniqueContactLabels(dataset).filter((label) =>
-    APPROVED_UM_SERVICE_CONTACT_LABELS.has(normalizeServiceContactLabel(label))
-  );
 }
 
 function getUniqueContactLabels(dataset) {

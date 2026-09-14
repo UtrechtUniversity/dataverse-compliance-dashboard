@@ -9,18 +9,14 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
 
-MAASTRICHT_TOP_LEVELS = {
-    "Faculty of Psychology and Neuroscience",
-    "School of Business and Economics",
-    "Faculty of Health, Medicine & Life Sciences",
-    "Faculty of Arts and Social Sciences",
-    "Faculty of Law",
-    "Faculty of Science and Engineering",
-    "UNU-MERIT",
-    "DataHub",
-    "Maastricht UMC+",
-    "Zuyderland",
-    "University Library",
+INSTITUTION_TOP_LEVELS = {
+    "UU Social and Behavioural Sciences",
+    "UU Geosciences",
+    "UU Science",
+    "UU Veterinary Medicine",
+    "UU Humanities",
+    "UU Law, Economics and Governance",
+    "UU other",
 }
 
 
@@ -103,15 +99,15 @@ def hierarchy_path(record: dict[str, Any]) -> list[str]:
     return []
 
 
-def within_maastricht(record: dict[str, Any]) -> bool:
+def within_institution(record: dict[str, Any]) -> bool:
     top_level = str(record.get("top_level_dataverse") or "").strip()
     if top_level:
-        return top_level in MAASTRICHT_TOP_LEVELS
+        return top_level in INSTITUTION_TOP_LEVELS
 
     path = hierarchy_path(record)
     if path:
         first = path[0]
-        return first in MAASTRICHT_TOP_LEVELS or first == "Maastricht University"
+        return first in INSTITUTION_TOP_LEVELS or first == "Utrecht University"
 
     return False
 
@@ -169,15 +165,15 @@ def main(argv: list[str]) -> int:
     )
     publication_counts = Counter(publication_state(record) for record in records)
     top_level_counts = Counter(str(record.get("top_level_dataverse") or "(missing)").strip() or "(missing)" for record in records)
-    outside_maastricht = [record for record in records if not within_maastricht(record)]
+    outside_institution = [record for record in records if not within_institution(record)]
     harvested_values = [is_harvested(record) for record in records]
     harvested_true = sum(1 for value in harvested_values if value is True)
     harvested_known = any(value is not None for value in harvested_values)
 
     dataset_only = [record for record in records if object_type(record).lower() == "dataset"]
     published_only = [record for record in dataset_only if is_published(record)]
-    maastricht_only = [record for record in published_only if within_maastricht(record)]
-    non_harvested = [record for record in maastricht_only if is_harvested(record) is not True]
+    institution_only = [record for record in published_only if within_institution(record)]
+    non_harvested = [record for record in institution_only if is_harvested(record) is not True]
     final_records = choose_unique_published(non_harvested)
 
     print(f"1. Total records in data/datasets.json: {len(records)}")
@@ -192,19 +188,19 @@ def main(argv: list[str]) -> int:
     print("7. Count by top-level dataverse path:")
     for label, count in top_level_counts.most_common():
         print(f"   - {label}: {count}")
-    print(f"8. Count outside Maastricht hierarchy: {len(outside_maastricht)}")
+    print(f"8. Count outside institution hierarchy: {len(outside_institution)}")
     if harvested_known:
         print(f"9. Count with harvested == true: {harvested_true}")
     else:
         print("9. Count with harvested == true: field not present in normalized data")
-    print(f"10. Final count after filtering to unique published datasets in Maastricht hierarchy: {len(final_records)}")
+    print(f"10. Final count after filtering to unique published datasets in institution hierarchy: {len(final_records)}")
 
     if not dataset_id_counts:
         print("WARNING: dataset_id is missing from normalized data; persistent_id is the only unique key currently available.")
     if "UNKNOWN" in publication_counts:
         print("WARNING: some records have no explicit publication-state field; they are excluded from the final published count.")
     if any(str(record.get('top_level_dataverse') or '').strip() == '' for record in records):
-        print("WARNING: some records have no top_level_dataverse; they are excluded from the Maastricht hierarchy count.")
+        print("WARNING: some records have no top_level_dataverse; they are excluded from the institution hierarchy count.")
 
     return 0
 

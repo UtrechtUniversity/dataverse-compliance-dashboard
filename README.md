@@ -1,11 +1,11 @@
 # DataverseNL Metadata Compliance Dashboard 📊
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-red.svg)](LICENSE)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20052424.svg)](https://doi.org/10.5281/zenodo.20052424)
+<!-- TODO: this fork doesn't have its own archived release yet; add a DOI badge here once one exists. -->
 
 This dashboard monitors compliance with selected metadata requirements derived from the UM DataverseNL Operational Guidelines, using the metadata items available in Dataverse records.
 
-✨ [Access the DataverseNL Metadata Compliance Dashboard](https://maastrichtu-library.github.io/dataverse-compliance-dashboard/) ✨
+✨ [Access the DataverseNL Metadata Compliance Dashboard](https://utrechtuniversity.github.io/dataverse-compliance-dashboard/) ✨
 
 ![Dashboard screen recording](assets/dashboard.gif)
 
@@ -14,24 +14,20 @@ This dashboard monitors compliance with selected metadata requirements derived f
 1. CC-BY licence for non restricted data → Based on guideline point 12.1.
    For the current implementation, this requirement is assessed by checking that the dataset has a non-empty licence other than CC0-1.0.
 2. Custom terms for restricted data → Based on guideline points 12.2–12.3.
-3. UM service contact is present → Based on guideline point 12.5.
-   Because the crawler export does not expose dataset contact emails, this requirement is assessed from approved service-contact labels in the dataset contact metadata. Current labels are: `Data Management Law`, `Data steward SBE`, `Datamanagement FPN`, `Dataverse Support Contact`, `DataverseNL Team`, `DataverseNL UM contact`, `DataverseNL UM-UL team`, `Faculty Data Manager`, `Faculty Data Manager FPN`, `FASoS Data Steward`, `ICIS office`, `Law and Tech Lab`, `Law Faculty Data Management Services`, `LAW RDM support`, `RDM Services`, `RDM Sevices`, `RDM support FASoS`, `RDM support LAW`, `rdm-roa`, `rdm-sbe`, `SBE Faculty Data Steward`, `SBE RDM`, `SBE Research Data Management`, `SBE Research Data Management (Maastricht University)`, `Shedata`, `UB Dataverse`, `UB Dataverse support`, `UM Admin`, `UM Dataverse Admin`, `UM Dataverse Support`, and `UM DataverseNL`.
+3. Dataset contact is present.
+   Because the crawler export does not expose dataset contact emails, and UU's dataset contacts are almost entirely individual researcher names rather than a shared institutional label (unlike the original Maastricht deployment's approved-label allowlist), this requirement is assessed simply as: at least one named dataset contact is present in the dataset contact metadata.
 4. At least one author has an ORCID → It is required for discoverability and be programmatically linked to the [CRIS system](https://cris.maastrichtuniversity.nl/) for research outputs at UM.
 5. Description is present → Based on section 9 of the guidelines.
 6. Keywords are present → Based on section 9 of the guidelines.
 
-[View the UM DataverseNL Operational Guidelines](https://documents.library.maastrichtuniversity.nl/S/759ea4c8-1b80-4e41-8636-731cea321382)
+[View the UM DataverseNL Operational Guidelines](https://documents.library.maastrichtuniversity.nl/S/759ea4c8-1b80-4e41-8636-731cea321382) <!-- TODO: link UU's own guidelines document once one exists -->
 
 ## Data source and architecture 🧩
 
 - The browser app does not query Dataverse live. It reads the latest normalized dashboard import prepared by the background metadata workflow.   
-- The metadata import is gathered from the [DataverseNL instance](https://dataverse.nl/dataverse/maastricht) using [scholarsportal/dataverse-metadata-crawler](https://github.com/scholarsportal/dataverse-metadata-crawler).  
+- The metadata import is gathered from the [DataverseNL instance](https://dataverse.nl/dataverse/UU) using [scholarsportal/dataverse-metadata-crawler](https://github.com/scholarsportal/dataverse-metadata-crawler).  
 - The crawler exports can be placed in the local, git-ignored `data/raw/` directory, and the transformation scripts in `scripts/` convert that output into dashboard-ready JSON for the dashboard import.
-- There is a service-contact allowlist audit that can be exported locally. The generated CSV is in the git-ignored `data/` directory.   
 
-```bash
-python3 scripts/export_service_contact_audit.py data/datasets.json data/service_contact_allowlist_audit.csv
-```
 The workflow is kept separate:
 
 ```text
@@ -51,7 +47,7 @@ static dashboard on GitHub Pages
 Clone the repository and serve it as a small static site:
 
 ```bash
-git clone https://github.com/MaastrichtU-Library/dataverse-compliance-dashboard.git
+git clone https://github.com/UtrechtUniversity/dataverse-compliance-dashboard.git
 cd dataverse-compliance-dashboard
 python -m http.server 8000
 ```
@@ -61,9 +57,9 @@ Then open `http://localhost:8000`.
 
 ## Citation 📚
 
-If you use this software in research, please cite the repository metadata in [CITATION.cff](https://github.com/MaastrichtU-Library/dataverse-compliance-dashboard/blob/main/CITATION.cff).  
+If you use this software in research, please cite the repository metadata in [CITATION.cff](https://github.com/UtrechtUniversity/dataverse-compliance-dashboard/blob/main/CITATION.cff).  
 
-> Hernandez Serrano, P. V. (2026). DataverseNL Metadata Compliance Dashboard (v26.05). Maastricht University Library. [doi.org/10.5281/zenodo.20052424](https://doi.org/10.5281/zenodo.20052424)
+> Hernandez Serrano, P., & Westerbeek, E. (2026). DataverseNL Metadata Compliance Dashboard (v26.05). <!-- TODO: add a DOI here once this fork has its own archived release -->
 
 ## Acknowledgements 🙌
 
@@ -75,8 +71,9 @@ Eventhough there are great clients for metadata extraction, we found a very neat
 
 ## Maintenance
 
-Author: [Pedro V Hernandez Serrano](https://github.com/pedrohserrano)  
-Software management: <researchsoftware-ub@maastrichtuniversity.nl>  
-Contact UM Dataverse: <ub-dataverse@maastrichtuniversity.nl>  
+Original author: [Pedro V Hernandez Serrano](https://github.com/pedrohserrano)  
+Maintainer (UU fork): [Emily Westerbeek](https://github.com/EmilyWes)  
+Software management: TODO: add UU contact  
+Contact UU Dataverse: TODO: add UU contact  
 Released under [MIT License](LICENSE)  
-© 2026 Maastricht University Library | [UM Disclaimer](https://www.maastrichtuniversity.nl/disclaimer)
+© 2026 Utrecht University Library | TODO: add UU disclaimer link

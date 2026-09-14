@@ -9,24 +9,26 @@ authors:
     given-names: "Pedro"
     email: "ub-dataverse@maastrichtuniversity.nl"
     orcid: "https://orcid.org/0000-0002-4646-4666"
+  - family-names: "Westerbeek"
+    given-names: "Emily"
+    email: "e.westerbeek@uu.nl"
+    orcid: "https://orcid.org/0009-0001-6664-8833"
 contact:
-  - name: "UM Dataverse Admin Team"
-    email: "ub-dataverse@maastrichtuniversity.nl"
-doi: 10.5281/zenodo.20052424
-url: https://maastrichtu-library.github.io/dataverse-compliance-dashboard/
-repository-code: https://github.com/MaastrichtU-Library/dataverse-compliance-dashboard
-repository-artifact: https://doi.org/10.5281/zenodo.20052424
+  - name: "TODO: add UU Dataverse contact name"
+    email: "TODO@uu.nl"
+# TODO: this fork has no archived release of its own yet - add a DOI here
+# once one exists (the original Maastricht deployment's DOI/URL below have
+# been removed since they point at a different project's release).
+url: https://utrechtuniversity.github.io/dataverse-compliance-dashboard/
+repository-code: https://github.com/UtrechtUniversity/dataverse-compliance-dashboard
 license: MIT
-abstract: "This dashboard monitors compliance provisioned by the UM DataverseNL Operational Guidelines. It uses the metadata attributes available in Dataverse records and it checks whether those requirements are present (or absent)."
+abstract: "This dashboard monitors compliance with selected metadata requirements for the UU DataverseNL collection. It uses the metadata attributes available in Dataverse records and it checks whether those requirements are present (or absent)."
 keywords:
   - research-data-management
   - dataverse
   - data-repository
   - metadata-compliance
 identifiers:
-  - type: doi
-    value: 10.5281/zenodo.20052424
-    description: "Zenodo archived release DOI for v26.05."
   - type: url
-    value: https://maastrichtu-library.github.io/dataverse-compliance-dashboard/
+    value: https://github.com/UtrechtUniversity/dataverse-compliance-dashboard
     description: "Dashboard landing page."

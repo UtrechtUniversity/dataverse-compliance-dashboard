@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DataverseNL Metadata Compliance Dashboard</title>
+    <title>DataverseNL Metadata Dashboard</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -27,13 +27,12 @@
         <div class="header-brand">
           <div class="header-copy">
             <p class="eyebrow">UTRECHT UNIVERSITY LIBRARY</p>
-            <h1>DataverseNL Metadata Compliance Dashboard</h1>
+            <h1>DataverseNL Metadata Dashboard</h1>
             <p class="subtitle">Research Data Support</p>
             <p class="intro">
-              This dashboard monitors compliance with selected metadata
-              requirements for the UU DataverseNL collection. It uses the
+              This dashboard asseses metadata attributes of UU DataverseNL collection. It uses the
               metadata attributes available in Dataverse records and it
-              checks whether those requirements are present (or absent).
+              checks it against common publishing criteria.
             </p>
           </div>
         </div>
@@ -42,7 +41,7 @@
       <main>
         <section class="dashboard-controls card overview-header">
           <div class="controls-intro overview-copy">
-            <h2>Compliance Overview</h2>
+            <h2>Overview</h2>
             <p class="panel-description" id="overview-import-text">
               Total Published Datasets reflects unique published datasets within
               the UU DataverseNL hierarchy.
@@ -68,7 +67,7 @@
                     </div>
                     <div class="pure-u-1 summary-item">
                       <article class="summary-card card">
-                        <p class="card-label">Most Frequent Missing Requirement</p>
+                        <p class="card-label">Most Frequently Missing</p>
                         <p class="card-value card-value-small" id="common-missing">
                           -
                         </p>
@@ -82,12 +81,12 @@
                     <div class="pure-u-1 pure-u-md-1-2">
                       <div class="panel card gauge-panel">
                         <div class="panel-header">
-                          <h2>Most Requirements Met</h2>
+                          <h2>Most criteria met</h2>
                           <p
                             class="panel-description"
                             title="Share of datasets where at least 5 of 6 monitored metadata requirements are identified."
                           >
-                            Share of datasets meeting most requirements (5/6 and 6/6).
+                            Share of datasets meeting most criteria (5/6 and 6/6).
                           </p>
                         </div>
                         <div id="most-requirements-gauge" class="gauge-chart"></div>
@@ -96,12 +95,12 @@
                     <div class="pure-u-1 pure-u-md-1-2">
                       <div class="panel card gauge-panel">
                         <div class="panel-header">
-                          <h2>Some Requirements Met</h2>
+                          <h2>Some criteria met</h2>
                           <p
                             class="panel-description"
                             title="Share of datasets where at least 3 of 6 monitored metadata requirements are identified."
                           >
-                            Share of datasets meeting half of the requirements.
+                            Share of datasets meeting half of the criteria.
                           </p>
                         </div>
                         <div id="some-requirements-gauge" class="gauge-chart"></div>
@@ -115,18 +114,18 @@
             <div class="top-dashboard-column top-dashboard-right">
               <section class="panel card department-chart-panel">
                 <div class="panel-header">
-                  <h2>What is the average number of metadata items meeting the requirements? (out of 6)</h2>
+                  <h2>What is the average number of metadata attributes that meet the criteria? (out of 6)</h2>
                 </div>
                 <div id="department-chart" class="chart"></div>
               </section>
             </div>
           </div>
         </section>
-
+8
         <section class="chart-section">
           <div class="panel card full-width-chart-panel">
             <div class="panel-header">
-              <h2>How many datasets are meeting the requirements across metadata items?</h2>
+              <h2>How many datasets are meeting the criteria across metadata attributes?</h2>
             </div>
             <div id="coverage-chart" class="chart chart-wide"></div>
           </div>
@@ -148,9 +147,9 @@
                   <th>Title</th>
                   <th>Faculty</th>
                   <th>Subdataverse</th>
-                  <th>Publication Date</th>
-                  <th>Requirements Met</th>
-                  <th>Missing Metadata Requirements</th>
+                  <th>Publication date</th>
+                  <th>Criteria met</th>
+                  <th>Missing metadata criteria</th>
                   <th>Link</th>
                 </tr>
               </thead>
@@ -161,49 +160,44 @@
 
         <section class="panel checks-panel card">
           <div class="panel-header">
-            <h2>How the metadata requirements are assessed?</h2>
+            <h2>How is the metadata criteria assessed?</h2>
             <p class="panel-description requirements-intro">
-              The requirements are derived from the UM DataverseNL
-              Operational Guidelines. Each requirement is operationalised as a
-              metadata check and the required information is checked from
-              available metadata items.
+              Currently the assesment criteria is based on Maastricht's Dataverse operational Guidelines, a new version will eventually be deployed to align the criteria with Utrecht University's own Publishing Guidelines.
+        
             </p>
           </div>
           <div class="requirements-examples">
             <details>
-              <summary>Licence requirement</summary>
+              <summary>Licence</summary>
               <ul>
                 <li>The dashboard checks whether the dataset has a non-empty licence other than CC0-1.0.</li>
                 <li>This operationalises the local expectation that datasets use CC-BY derivatives unless another permitted condition applies. CC0 are not ideal because does not require the end user to attribute the authors.</li>
-                <li>Based on guideline point 12.1.</li>
               </ul>
             </details>
             <details>
-              <summary>Restricted data requirement</summary>
+              <summary>Restricted data</summary>
               <ul>
                 <li>The dashboard checks whether custom terms or access conditions are present when at least one file has restricted access.</li>
                 <li>Restricted data require clear access conditions so that users and curators understand how access is governed. This is important for cases where (pseudo)anonymized data is shared.</li>
-                <li>Based on guideline points 12.2 and 12.3.</li>
               </ul>
             </details>
             <details>
-              <summary>UM service contact requirement</summary>
+              <summary>UU contact</summary>
               <ul>
-                <li>The dashboard checks whether at least one UM service contact (email) is present among the dataset contacts.</li>
+                <li>The dashboard checks whether at least one UU contact (email) is present among the dataset contacts.</li>
                 <li>Important: Do not confuse "contact(s)" with "author(s)". Authors might be listed as contacts, but not necessarily.</li>
                 <li>This supports continuity of responsibility when individual depositors are no longer available. Examples: "RDM support FASoS", "UM Dataverse Admin", and "faculty data manager FPN", "SHE data", etc.</li>
-                <li>Based on guideline point 12.5.</li>
               </ul>
             </details>
             <details>
-              <summary>ORCID requirement</summary>
+              <summary>ORCID</summary>
               <ul>
                 <li>The dashboard checks whether at least one author has an ORCID.</li>
                 <li>This supports discoverability, attribution, and programmatic linking to the UM <a href="https://cris.maastrichtuniversity.nl/" target="_blank" rel="noreferrer">CRIS system</a> (Pure) for research outputs.</li>
               </ul>
             </details>
             <details>
-              <summary>Description requirement</summary>
+              <summary>Description</summary>
               <ul>
                 <li>The dashboard checks whether a dataset description is present.</li>
                 <li>A description helps users understand the content, context, and purpose of the data publicationm which sometimes is different from the scientific article.</li>
@@ -211,7 +205,7 @@
               </ul>
             </details>
             <details>
-              <summary>Keywords requirement</summary>
+              <summary>Keywords</summary>
               <ul>
                 <li>The dashboard checks whether at least one keyword is present.</li>
                 <li>Keywords support discovery, indexing, and reuse of the data publication.</li>
@@ -239,10 +233,7 @@
           </div>
           <p>
             Note: This dashboard is not based on live data, it uses a static
-            metadata import (which is refreshed monthly). More info contact
-            <a href="#">
-              TODO: add UU DataverseNL contact email
-            </a>
+            metadata import (last refresh: 2026-09-14). More info contact info.rdm@uu.nl
           </p>
           <p>
             The current metadata scope considers the
@@ -253,31 +244,21 @@
             >
               Utrecht University DataverseNL instance
             </a>.
-            More information about the UU Dataverse is available at
-            <a href="#" target="_blank" rel="noreferrer">
-              TODO: add UU DataverseNL support link
-            </a>, as well as the
-            <a href="#" target="_blank" rel="noreferrer">
-              TODO: add UU Terms of Use and Operational Guidelines link
-            </a>.
-            More requirements or checks can be considered in the future. However only
-            metadata checks that can reasonably be assessed from available Dataverse
-            attributes can be included.
-          </p>
-          <p>
-            This dashboard supports curator monitoring and service improvement,
-            in line with the
-            <a href="#" target="_blank" rel="noreferrer">
-              TODO: add UU Research Data Management Code of Conduct link
-            </a>.
-            It does not replace legal assessment, privacy review, ethical assessment, or disciplinary data stewardship judgement.
-          </p>
-          <p>
-            If you are a researcher, please visit the
-            <a href="#" target="_blank" rel="noreferrer">
-              TODO: add UU research information profile application link
-            </a>
-            application to curate your research outputs and datasets.
+            Currently the assesment criteria is based on 
+            <a
+              href="https://documents.library.maastrichtuniversity.nl/S/759ea4c8-1b80-4e41-8636-731cea321382"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Masstricht's Dataverse operational Guidelines
+            </a>. A new version will eventually be deployed to align the criteria with 
+            <a
+              href="https://zenodo.org/records/15149066"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Utrecht University's own Publishing Guidelines
+            </a>.          
           </p>
           <p>
             This software is released under the MIT License. Repository:
@@ -309,10 +290,7 @@
 
       <footer class="page-footer">
         <p>
-          &copy; <span id="footer-year"></span> Utrecht University Library |
-          <a href="#" target="_blank" rel="noreferrer">
-            TODO: add UU disclaimer link
-          </a>
+          &copy; <span id="footer-year"></span> Utrecht University
         </p>
       </footer>
     </div>

@@ -460,7 +460,7 @@ function renderTable(datasets) {
 
 function renderUnmetChecks(unmetChecks) {
   if (!unmetChecks.length) {
-    return '<span class="badge badge-pass">All requirements met</span>';
+    return '<span class="badge badge-pass">All criteria met</span>';
   }
 
   return `<div class="badge-list">${unmetChecks
@@ -470,14 +470,14 @@ function renderUnmetChecks(unmetChecks) {
 
 function renderPassedChecksBadge(passedChecksCount) {
   if (passedChecksCount === CHECK_ORDER.length) {
-    return `<span class="badge badge-pass">${passedChecksCount}/${CHECK_ORDER.length} requirements met</span>`;
+    return `<span class="badge badge-pass">${passedChecksCount}/${CHECK_ORDER.length} criteria met</span>`;
   }
 
   if (passedChecksCount === 0) {
-    return `<span class="badge badge-fail">0/${CHECK_ORDER.length} requirements met</span>`;
+    return `<span class="badge badge-fail">0/${CHECK_ORDER.length} criteria met</span>`;
   }
 
-  return `<span class="badge badge-neutral">${passedChecksCount}/${CHECK_ORDER.length} requirements met</span>`;
+  return `<span class="badge badge-neutral">${passedChecksCount}/${CHECK_ORDER.length} criteria met</span>`;
 }
 
 function renderCharts(datasets) {
@@ -516,7 +516,7 @@ function renderCharts(datasets) {
         }
         return [
           `${departmentTooltipLabel}: ${escapeHtml(item.label)}`,
-          `Average metadata items meeting requirements: ${formatOneDecimal(item.average)} / ${CHECK_ORDER.length}`,
+          `Average metadata items meeting criteria: ${formatOneDecimal(item.average)} / ${CHECK_ORDER.length}`,
           `Datasets included: ${item.count}`,
         ].join("<br>");
       },
@@ -556,7 +556,7 @@ function renderCharts(datasets) {
     },
     series: [
       {
-        name: "Average metadata items meeting requirements",
+        name: "Average metadata items meeting criteria",
         type: "bar",
         data: departmentGroups.map((item) => Number(item.average.toFixed(1))),
         barWidth: 3,
@@ -568,7 +568,7 @@ function renderCharts(datasets) {
         animationDelay: (idx) => idx * 80,
       },
       {
-        name: "Average metadata items meeting requirements",
+        name: "Average metadata items meeting criteria",
         type: "scatter",
         data: departmentGroups.map((item) => Number(item.average.toFixed(1))),
         symbolSize: 14,
@@ -641,7 +641,7 @@ function renderCharts(datasets) {
     },
     series: [
       {
-        name: "Requirements met",
+        name: "criteria met",
         type: "bar",
         data: metCheckCounts.map((item) => item.count),
         barMaxWidth: 42,
@@ -907,8 +907,8 @@ function setupCsvExport() {
       "Faculty",
       "Subdataverse",
       "Publication Date",
-      "Requirements Met",
-      "Missing Metadata Requirements",
+      "Criteria Met",
+      "Missing Metadata criteria",
       "All Contact Labels",
       ...CHECK_ORDER.map((key) => CHECK_LABELS[key]),
       "Persistent ID",
@@ -920,7 +920,7 @@ function setupCsvExport() {
       getFacultyValue(dataset),
       formatSubdataversePathForTable(dataset),
       dataset.publication_date || "",
-      `${dataset.passed_checks_count}/${CHECK_ORDER.length} requirements met`,
+      `${dataset.passed_checks_count}/${CHECK_ORDER.length} criteria met`,
       (dataset.unmet_checks || dataset.missing_checks || []).join("; "),
       getUniqueContactLabels(dataset).join("; "),
       ...CHECK_ORDER.map((key) => dataset.checks[key]),
@@ -1128,7 +1128,7 @@ function wrapLabel(value, maxCharsPerLine = 22) {
 
 function renderOverviewImportText(importDate) {
   const formattedDate = formatImportDate(importDate);
-  const baseText = "Selected compliance indicators based on the latest DataverseNL metadata import.";
+  const baseText = "Assesment of metadata attributes based on the latest DataverseNL metadata import.";
 
   setText(
     "overview-import-text",

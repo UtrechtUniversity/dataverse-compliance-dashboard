@@ -30,9 +30,9 @@
             <h1>DataverseNL Metadata Dashboard</h1>
             <p class="subtitle">Research Data Support</p>
             <p class="intro">
-              This dashboard asseses metadata attributes of UU DataverseNL collection. It uses the
-              metadata attributes available in Dataverse records and it
-              checks it against common publishing criteria.
+              This dashboard gives insight into the metadata attributes of the UU DataverseNL
+              collection. It uses the metadata attributes available in Dataverse records and
+              shows how many of the recommended publishing practices are present.
             </p>
           </div>
         </div>
@@ -81,12 +81,12 @@
                     <div class="pure-u-1 pure-u-md-1-2">
                       <div class="panel card gauge-panel">
                         <div class="panel-header">
-                          <h2>Most criteria met</h2>
+                          <h2>Most recommendations followed</h2>
                           <p
                             class="panel-description"
-                            title="Share of datasets where at least 5 of 6 monitored metadata requirements are identified."
+                            title="Share of datasets where at least 5 of 6 recommended metadata practices are identified."
                           >
-                            Share of datasets meeting most criteria (5/6 and 6/6).
+                            Share of datasets following most recommendations (5/6 and 6/6).
                           </p>
                         </div>
                         <div id="most-requirements-gauge" class="gauge-chart"></div>
@@ -95,12 +95,12 @@
                     <div class="pure-u-1 pure-u-md-1-2">
                       <div class="panel card gauge-panel">
                         <div class="panel-header">
-                          <h2>Some criteria met</h2>
+                          <h2>Some recommendations followed</h2>
                           <p
                             class="panel-description"
-                            title="Share of datasets where at least 3 of 6 monitored metadata requirements are identified."
+                            title="Share of datasets where at least 3 of 6 recommended metadata practices are identified."
                           >
-                            Share of datasets meeting half of the criteria.
+                            Share of datasets following half of the recommendations.
                           </p>
                         </div>
                         <div id="some-requirements-gauge" class="gauge-chart"></div>
@@ -114,18 +114,17 @@
             <div class="top-dashboard-column top-dashboard-right">
               <section class="panel card department-chart-panel">
                 <div class="panel-header">
-                  <h2>What is the average number of metadata attributes that meet the criteria? (out of 6)</h2>
+                  <h2>What is the average number of recommendations followed? (out of 6)</h2>
                 </div>
                 <div id="department-chart" class="chart"></div>
               </section>
             </div>
           </div>
         </section>
-8
         <section class="chart-section">
           <div class="panel card full-width-chart-panel">
             <div class="panel-header">
-              <h2>How many datasets are meeting the criteria across metadata attributes?</h2>
+              <h2>How many datasets follow each recommendation?</h2>
             </div>
             <div id="coverage-chart" class="chart chart-wide"></div>
           </div>
@@ -148,8 +147,8 @@
                   <th>Faculty</th>
                   <th>Subdataverse</th>
                   <th>Publication date</th>
-                  <th>Criteria met</th>
-                  <th>Missing metadata criteria</th>
+                  <th>Recommendations followed</th>
+                  <th>Not yet present</th>
                   <th>Link</th>
                 </tr>
               </thead>
@@ -160,65 +159,62 @@
 
         <section class="panel checks-panel card">
           <div class="panel-header">
-            <h2>How is the metadata criteria assessed?</h2>
+            <h2>How is the metadata assessed?</h2>
             <p class="panel-description requirements-intro">
-              Currently the assesment criteria is based on Maastricht's Dataverse operational Guidelines, a new version will eventually be deployed to align the criteria with Utrecht University's own Publishing Guidelines.
-        
+              The recommendations below are based on Utrecht University's Publishing Guidelines. They are advice to help make datasets findable and reusable, not strict rules.
             </p>
           </div>
           <div class="requirements-examples">
             <details>
               <summary>Licence</summary>
               <ul>
-                <li>The dashboard checks whether the dataset has a non-empty licence other than CC0-1.0.</li>
-                <li>This operationalises the local expectation that datasets use CC-BY derivatives unless another permitted condition applies. CC0 are not ideal because does not require the end user to attribute the authors.</li>
+                <li>The dashboard looks for a licence other than CC0-1.0.</li>
+                <li>CC-BY derivatives are recommended unless another condition applies. CC0 is less ideal because it does not require end users to attribute the authors.</li>
               </ul>
             </details>
             <details>
               <summary>Restricted data</summary>
               <ul>
-                <li>The dashboard checks whether custom terms or access conditions are present when at least one file has restricted access.</li>
-                <li>Restricted data require clear access conditions so that users and curators understand how access is governed. This is important for cases where (pseudo)anonymized data is shared.</li>
+                <li>The dashboard looks for custom terms or access conditions when at least one file has restricted access.</li>
+                <li>Restricted data benefit from clear access conditions so that users and curators understand how access is governed. This is important for cases where (pseudo)anonymized data is shared.</li>
               </ul>
             </details>
             <details>
-              <summary>UU contact</summary>
+              <summary>Contact</summary>
               <ul>
-                <li>The dashboard checks whether at least one UU contact (email) is present among the dataset contacts.</li>
+                <li>The dashboard looks for at least one named dataset contact.</li>
                 <li>Important: Do not confuse "contact(s)" with "author(s)". Authors might be listed as contacts, but not necessarily.</li>
-                <li>This supports continuity of responsibility when individual depositors are no longer available. Examples: "RDM support FASoS", "UM Dataverse Admin", and "faculty data manager FPN", "SHE data", etc.</li>
+                <li>This supports continuity of responsibility when individual depositors are no longer available. A shared contact such as a faculty data manager or RDM support team works well.</li>
               </ul>
             </details>
             <details>
               <summary>ORCID</summary>
               <ul>
-                <li>The dashboard checks whether at least one author has an ORCID.</li>
-                <li>This supports discoverability, attribution, and programmatic linking to the UM <a href="https://cris.maastrichtuniversity.nl/" target="_blank" rel="noreferrer">CRIS system</a> (Pure) for research outputs.</li>
+                <li>The dashboard looks for at least one author with an ORCID.</li>
+                <li>This supports discoverability, attribution, and programmatic linking to research-output systems.</li>
               </ul>
             </details>
             <details>
               <summary>Description</summary>
               <ul>
-                <li>The dashboard checks whether a dataset description is present.</li>
-                <li>A description helps users understand the content, context, and purpose of the data publicationm which sometimes is different from the scientific article.</li>
-                <li>Based on section 9 of the guidelines.</li>
+                <li>The dashboard looks for a dataset description.</li>
+                <li>A description helps users understand the content, context, and purpose of the data publication, which sometimes is different from the scientific article.</li>
               </ul>
             </details>
             <details>
               <summary>Keywords</summary>
               <ul>
-                <li>The dashboard checks whether at least one keyword is present.</li>
+                <li>The dashboard looks for at least one keyword.</li>
                 <li>Keywords support discovery, indexing, and reuse of the data publication.</li>
-                <li>Based on section 9 of the guidelines.</li>
                 <li>Ideally keywords are based on controlled vocabularies. <a href="https://www.kuleuven.be/rdm/en/guidance/documentation-metadata/vocabularies" target="_blank" rel="noreferrer">RDM from KU Leuven</a> has a good explanation of how to use them.</li>
               </ul>
             </details>
           </div>
           <p class="checks-link-row">
-            <span class="checks-guideline-label">UM DataverseNL Operational Guidelines</span>
+            <span class="checks-guideline-label">UU Publishing Guidelines</span>
             <a
               class="pure-button pure-button-primary checks-download-button"
-              href="https://documents.library.maastrichtuniversity.nl/S/759ea4c8-1b80-4e41-8636-731cea321382"
+              href="https://zenodo.org/records/15149066"
               target="_blank"
               rel="noreferrer"
             >
@@ -244,14 +240,7 @@
             >
               Utrecht University DataverseNL instance
             </a>.
-            Currently the assesment criteria is based on 
-            <a
-              href="https://documents.library.maastrichtuniversity.nl/S/759ea4c8-1b80-4e41-8636-731cea321382"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Masstricht's Dataverse operational Guidelines
-            </a>. A new version will eventually be deployed to align the criteria with 
+            The recommendations are based on
             <a
               href="https://zenodo.org/records/15149066"
               target="_blank"

@@ -11,7 +11,7 @@ const GUIDELINE_CHECKS = [
   {
     key: "license_cc_by_4",
     title: "CC-BY licence for non restricted data",
-    detail: "Checks that the dataset has a non-empty licence other than CC0-1.0.",
+    detail: "Looks for a licence other than CC0-1.0.",
   },
   {
     key: "restricted_terms",
@@ -26,7 +26,7 @@ const GUIDELINE_CHECKS = [
   {
     key: "author_orcid",
     title: "At least one author has an ORCID",
-    detail: "It is required for discoverability and programmatic linking to research-output systems.",
+    detail: "Supports discoverability and programmatic linking to research-output systems.",
   },
   {
     key: "description_present",
@@ -460,24 +460,24 @@ function renderTable(datasets) {
 
 function renderUnmetChecks(unmetChecks) {
   if (!unmetChecks.length) {
-    return '<span class="badge badge-pass">All criteria met</span>';
+    return '<span class="badge badge-pass">All recommendations followed</span>';
   }
 
   return `<div class="badge-list">${unmetChecks
-    .map((item) => `<span class="badge badge-fail">${escapeHtml(item)}</span>`)
+    .map((item) => `<span class="badge badge-neutral">${escapeHtml(item)}</span>`)
     .join("")}</div>`;
 }
 
 function renderPassedChecksBadge(passedChecksCount) {
   if (passedChecksCount === CHECK_ORDER.length) {
-    return `<span class="badge badge-pass">${passedChecksCount}/${CHECK_ORDER.length} criteria met</span>`;
+    return `<span class="badge badge-pass">${passedChecksCount}/${CHECK_ORDER.length} recommendations followed</span>`;
   }
 
   if (passedChecksCount === 0) {
-    return `<span class="badge badge-fail">0/${CHECK_ORDER.length} criteria met</span>`;
+    return `<span class="badge badge-neutral">0/${CHECK_ORDER.length} recommendations followed</span>`;
   }
 
-  return `<span class="badge badge-neutral">${passedChecksCount}/${CHECK_ORDER.length} criteria met</span>`;
+  return `<span class="badge badge-neutral">${passedChecksCount}/${CHECK_ORDER.length} recommendations followed</span>`;
 }
 
 function renderCharts(datasets) {
@@ -498,7 +498,7 @@ function renderCharts(datasets) {
 
   departmentChart.setOption({
     backgroundColor: CHART_COLORS.background,
-    color: [CHART_COLORS.warning],
+    color: [CHART_COLORS.secondary],
     animationDuration: 1050,
     animationEasing: "cubicOut",
     grid: { top: 8, right: 66, bottom: 28, left: 160, containLabel: false },
@@ -516,7 +516,7 @@ function renderCharts(datasets) {
         }
         return [
           `${departmentTooltipLabel}: ${escapeHtml(item.label)}`,
-          `Average metadata items meeting criteria: ${formatOneDecimal(item.average)} / ${CHECK_ORDER.length}`,
+          `Average recommendations followed: ${formatOneDecimal(item.average)} / ${CHECK_ORDER.length}`,
           `Datasets included: ${item.count}`,
         ].join("<br>");
       },
@@ -556,19 +556,19 @@ function renderCharts(datasets) {
     },
     series: [
       {
-        name: "Average metadata items meeting criteria",
+        name: "Average recommendations followed",
         type: "bar",
         data: departmentGroups.map((item) => Number(item.average.toFixed(1))),
         barWidth: 3,
         z: 1,
         itemStyle: {
-          color: CHART_COLORS.warning,
+          color: CHART_COLORS.secondary,
           borderRadius: [0, 3, 3, 0],
         },
         animationDelay: (idx) => idx * 80,
       },
       {
-        name: "Average metadata items meeting criteria",
+        name: "Average recommendations followed",
         type: "scatter",
         data: departmentGroups.map((item) => Number(item.average.toFixed(1))),
         symbolSize: 14,
@@ -582,7 +582,7 @@ function renderCharts(datasets) {
           fontWeight: 600,
         },
         itemStyle: {
-          color: CHART_COLORS.warning,
+          color: CHART_COLORS.secondary,
           borderColor: CHART_COLORS.background,
           borderWidth: 2,
         },
@@ -605,8 +605,8 @@ function renderCharts(datasets) {
       formatter: (params) => {
         const item = metCheckCounts[params[0].dataIndex];
         return item
-          ? `Metadata item: ${escapeHtml(item.label)}<br>Datasets meeting this requirement: ${params[0].value}`
-          : `Datasets meeting this requirement: ${params[0].value}`;
+          ? `Metadata item: ${escapeHtml(item.label)}<br>Datasets following this recommendation: ${params[0].value}`
+          : `Datasets following this recommendation: ${params[0].value}`;
       },
     },
     xAxis: {
@@ -641,7 +641,7 @@ function renderCharts(datasets) {
     },
     series: [
       {
-        name: "criteria met",
+        name: "recommendations followed",
         type: "bar",
         data: metCheckCounts.map((item) => item.count),
         barMaxWidth: 42,
@@ -681,8 +681,8 @@ function renderGauges(datasets) {
       )
     : 0;
 
-  mostRequirementsGauge.setOption(makeGaugeOption(meetingMostRequirementsPercentage, CHART_COLORS.warning));
-  someRequirementsGauge.setOption(makeGaugeOption(meetingSomeRequirementsPercentage, CHART_COLORS.warning));
+  mostRequirementsGauge.setOption(makeGaugeOption(meetingMostRequirementsPercentage, CHART_COLORS.secondary));
+  someRequirementsGauge.setOption(makeGaugeOption(meetingSomeRequirementsPercentage, CHART_COLORS.secondary));
   chartInstances.push(mostRequirementsGauge, someRequirementsGauge);
 }
 
@@ -907,8 +907,8 @@ function setupCsvExport() {
       "Faculty",
       "Subdataverse",
       "Publication Date",
-      "Criteria Met",
-      "Missing Metadata criteria",
+      "Recommendations Followed",
+      "Not Yet Present",
       "All Contact Labels",
       ...CHECK_ORDER.map((key) => CHECK_LABELS[key]),
       "Persistent ID",
@@ -920,7 +920,7 @@ function setupCsvExport() {
       getFacultyValue(dataset),
       formatSubdataversePathForTable(dataset),
       dataset.publication_date || "",
-      `${dataset.passed_checks_count}/${CHECK_ORDER.length} criteria met`,
+      `${dataset.passed_checks_count}/${CHECK_ORDER.length} recommendations followed`,
       (dataset.unmet_checks || dataset.missing_checks || []).join("; "),
       getUniqueContactLabels(dataset).join("; "),
       ...CHECK_ORDER.map((key) => dataset.checks[key]),
@@ -936,7 +936,7 @@ function setupCsvExport() {
     const downloadUrl = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = downloadUrl;
-    link.download = "dataversenl-metadata-requirements.csv";
+    link.download = "dataversenl-metadata-recommendations.csv";
     link.click();
     URL.revokeObjectURL(downloadUrl);
   });

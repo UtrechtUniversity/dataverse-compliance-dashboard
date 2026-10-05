@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: DataverseNL Metadata Compliance Dashboard
+title: DataverseNL Metadata Dashboard
 message: "If you use this software, please cite it using the metadata in this file."
 type: software
 version: "26.05"
@@ -22,12 +22,12 @@ contact:
 url: https://utrechtuniversity.github.io/dataverse-compliance-dashboard/
 repository-code: https://github.com/UtrechtUniversity/dataverse-compliance-dashboard
 license: MIT
-abstract: "This dashboard monitors compliance with selected metadata requirements for the UU DataverseNL collection. It uses the metadata attributes available in Dataverse records and it checks whether those requirements are present (or absent)."
+abstract: "This dashboard gives insight into the metadata of the UU DataverseNL collection. It uses the metadata attributes available in Dataverse records and shows which recommended publishing practices are present."
 keywords:
   - research-data-management
   - dataverse
   - data-repository
-  - metadata-compliance
+  - metadata-quality
 identifiers:
   - type: url
     value: https://github.com/UtrechtUniversity/dataverse-compliance-dashboard

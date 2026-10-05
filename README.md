@@ -3,24 +3,24 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-red.svg)](LICENSE)
 <!-- TODO: this fork doesn't have its own archived release yet; add a DOI badge here once one exists. -->
 
-This dashboard asseses metadata attributes of Utrecht University DataverseNL datasets against common publishing criteria.
+This dashboard gives insight into the metadata of Utrecht University DataverseNL datasets and shows how many recommended publishing practices are present.
 
-✨ [Access the DataverseNL Metadata Compliance Dashboard](https://utrechtuniversity.github.io/dataverse-compliance-dashboard/) ✨
+✨ [Access the DataverseNL Metadata Dashboard](https://utrechtuniversity.github.io/dataverse-compliance-dashboard/) ✨
 
 ![Dashboard screen recording](assets/dashboard.gif)
 
-## Publishing Criteria Assesed ✅
+## Recommended Publishing Practices ✅
 
-1. Prescence of a CC-BY licence for non restricted data.
-   For the current implementation, this is assessed by checking that the dataset has a non-empty licence other than CC0-1.0.
+1. Presence of a CC-BY licence for non restricted data.
+   For the current implementation, the dashboard looks for a non-empty licence other than CC0-1.0.
 2. Custom terms for restricted data
 3. Dataset contact is present.
-   Because the crawler export does not expose dataset contact emails, and UU's dataset contacts are almost entirely individual researcher names rather than a shared institutional label this requirement is assessed     simply as: at least one named dataset contact is present in the dataset contact metadata.
+   Because the crawler export does not expose dataset contact emails, and UU's dataset contacts are almost entirely individual researcher names rather than a shared institutional label this is shown simply as: at least one named dataset contact is present in the dataset contact metadata.
 4. At least one author has an ORCID.
 5. Description is present.
 6. Keywords are present.
 
-Currently the assesment criteria is based on [Masstricht's Dataverse operational Guidelines](https://documents.library.maastrichtuniversity.nl/S/759ea4c8-1b80-4e41-8636-731cea321382), a new version will eventually be deployed to align the criteria with [Utrecht University's own Publishing Guidelines](https://zenodo.org/records/15149066).
+These recommendations are based on [Utrecht University's Publishing Guidelines](https://zenodo.org/records/15149066). They are advice, not strict rules.
 
 ## Data source and architecture 🧩
 
@@ -59,13 +59,13 @@ Then open `http://localhost:8000`.
 
 If you use this software in research, please cite the repository metadata in [CITATION.cff](https://github.com/UtrechtUniversity/dataverse-compliance-dashboard/blob/main/CITATION.cff).  
 
-> Hernandez Serrano, P., & Westerbeek, E. (2026). DataverseNL Metadata Compliance Dashboard (v26.05). <!-- TODO: add a DOI here once this fork has its own archived release -->
+> Hernandez Serrano, P., & Westerbeek, E. (2026). DataverseNL Metadata Dashboard (v26.05). <!-- TODO: add a DOI here once this fork has its own archived release -->
 
 ## Acknowledgements 🙌
 
 Eventhough there are great clients for metadata extraction, we found a very neat one [scholarsportal/dataverse-metadata-crawler](https://github.com/scholarsportal/dataverse-metadata-crawler), maintained by [Scholars Portal](https://github.com/scholarsportal), a service of the Ontario Council of University Libraries, and developed by [Ken Lui](https://github.com/kenlhlui) 👍🏼.  
 
-[DataverseNL](https://dataverse.nl/) is a consortium service supported by [DANS](https://dans.knaw.nl/en/about/). This dashboard is derived from the dashboard independently developped by Maastricht University Library.
+[DataverseNL](https://dataverse.nl/) is a consortium service supported by [DANS](https://dans.knaw.nl/en/about/). This dashboard is derived from the dashboard independently developed by Maastricht University Library.
 
 ## Maintenance
 

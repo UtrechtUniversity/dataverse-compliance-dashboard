@@ -4,7 +4,7 @@
   xmlns="http://www.w3.org/2000/svg"
   viewBox="0 0 32 32"
   role="img"
-  aria-label="Dataverse compliance dashboard icon"
+  aria-label="Dataverse metadata dashboard icon"
 >
   <rect width="32" height="32" rx="6" fill="#001c3d" />
   <rect x="7" y="17" width="4" height="8" rx="1" fill="#ffffff" />
